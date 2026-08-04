@@ -1,0 +1,123 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions: {}
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.tag.outputs.version }}
+    steps:
+      - name: Validate semantic version tag
+        id: tag
+        shell: bash
+        run: |
+          if [[ ! "${GITHUB_REF_NAME}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            printf 'Expected a stable semantic version tag such as v1.2.3, got %s\n' "${GITHUB_REF_NAME}" >&2
+            exit 1
+          fi
+          printf 'version=%s\n' "${GITHUB_REF_NAME#v}" >> "${GITHUB_OUTPUT}"
+
+  build:
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+            archive: tar.gz
+          - goos: linux
+            goarch: arm64
+            archive: tar.gz
+          - goos: darwin
+            goarch: amd64
+            archive: tar.gz
+          - goos: darwin
+            goarch: arm64
+            archive: tar.gz
+          - goos: windows
+            goarch: amd64
+            archive: zip
+          - goos: windows
+            goarch: arm64
+            archive: zip
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Build archive
+        shell: bash
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: "0"
+          VERSION: ${{ needs.validate.outputs.version }}
+          ARCHIVE: ${{ matrix.archive }}
+        run: |
+          set -euo pipefail
+          binary=paper
+          if [[ "${GOOS}" == windows ]]; then binary=paper.exe; fi
+          mkdir -p package dist
+          go build -trimpath \
+            -ldflags "-s -w -X github.com/gabrielchantayan/paper/internal/cli.Version=${VERSION} -X github.com/gabrielchantayan/paper/internal/cli.Commit=${GITHUB_SHA} -X github.com/gabrielchantayan/paper/internal/cli.BuildDate=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            -o "package/${binary}" ./cmd/paper
+          cp README.md LICENSE package/
+          name="paper_${VERSION}_${GOOS}_${GOARCH}"
+          if [[ "${ARCHIVE}" == zip ]]; then
+            (cd package && zip -q -r "../dist/${name}.zip" .)
+          else
+            tar -C package -czf "dist/${name}.tar.gz" .
+          fi
+      - name: Upload archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: paper-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: dist/*
+          if-no-files-found: error
+
+  release:
+    needs: [validate, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download archives
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: paper-*
+          path: dist
+          merge-multiple: true
+      - name: Publish GitHub release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          count=$(find dist -maxdepth 1 -type f \( -name '*.tar.gz' -o -name '*.zip' \) | wc -l)
+          if [[ "${count}" -ne 6 ]]; then
+            printf 'Expected 6 release archives, found %s\n' "${count}" >&2
+            exit 1
+          fi
+          (cd dist && sha256sum ./* > checksums.txt)
+          gh release create "${GITHUB_REF_NAME}" dist/* \
+            --repo "${GITHUB_REPOSITORY}" \
+            --verify-tag \
+            --generate-notes \
+            --latest

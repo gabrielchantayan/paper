@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Paper is a local-first work and friction log for coding agents.">
+    <meta name="theme-color" content="#f2eddf">
+    <title>Paper | Field notes for coding agents</title>
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Paper home">
+        <span class="brand-mark" aria-hidden="true"><i>&#8203;</i><i>&#8203;</i><i>&#8203;</i></span>
+        <span>paper</span>
+      </a>
+      <nav aria-label="Main navigation">
+        <a href="#records">What it records</a>
+        <a href="#setup">Setup</a>
+        <a class="github-link" href="https://github.com/gabrielchantayan/paper">GitHub <span aria-hidden="true">↗</span></a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="kicker">Field notes for coding agents</p>
+          <h1>The work happened.<br><em>The friction did too.</em></h1>
+          <p class="lede">Paper gives agents a durable place to record what they finished and the bullshit they had to push through. Local Markdown. Every project. No service watching over your shoulder.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="#setup">Set up Paper</a>
+            <a class="button secondary" href="https://github.com/gabrielchantayan/paper">Read the source</a>
+          </div>
+        </div>
+
+        <div class="terminal-wrap" aria-label="Paper command example">
+          <div class="paper-tab">TODAY / 04 AUG</div>
+          <div class="terminal">
+            <div class="terminal-bar"><span>&#8203;</span><span>&#8203;</span><span>&#8203;</span><b>~/work/paper</b></div>
+            <pre><code><span class="prompt">$</span> paper log --summary \
+  <span class="string">"Shipped strict record parsing"</span>
+
+<span class="success">Recorded work</span>
+<span class="muted">paper/work · paper · main</span>
+
+<span class="prompt">$</span> paper cut --summary \
+  <span class="string">"Setup guide points to a 404"</span> \
+  --description <span class="string">"The old API page is gone."</span> \
+  --kind broken-link
+
+<span class="cut">Recorded cut</span>
+<span class="muted">paper/cut · open · broken-link</span></code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="marquee" aria-label="Paper qualities">
+        <div>PLAIN MARKDOWN <span>◆</span> MULTI-PROJECT <span>◆</span> GIT-AWARE <span>◆</span> OBSIDIAN-FRIENDLY <span>◆</span> LOCAL-FIRST <span>◆</span> PLAIN MARKDOWN <span>◆</span></div>
+      </section>
+
+      <section class="records" id="records">
+        <div class="section-heading">
+          <p class="folio">01 / THE RECORD</p>
+          <h2>Models forget.<br>Files don't.</h2>
+          <p>Agents naturally optimize for finishing the task. Paper makes the invisible parts of that work visible without turning every tool call into surveillance exhaust.</p>
+        </div>
+        <div class="record-grid">
+          <article class="record-card work-card">
+            <div class="record-number">01</div>
+            <p class="record-command">paper log</p>
+            <h3>What got done</h3>
+            <p>One concise outcome after meaningful work, automatically attributed to the repository, branch, commit, and exact directory where it happened.</p>
+            <div class="record-sample">
+              <span>WORK</span>
+              <strong>Added tagged cross-platform releases</strong>
+              <small>paper · main · 14:42</small>
+            </div>
+          </article>
+          <article class="record-card cut-card">
+            <div class="record-number">02</div>
+            <p class="record-command">paper cut</p>
+            <h3>What got in the way</h3>
+            <p>Dead-end tools, broken links, misleading docs, brittle environments, and workflow friction captured at the moment the agent encounters them.</p>
+            <div class="record-sample">
+              <span>CUT / OPEN</span>
+              <strong>Release docs omit required permissions</strong>
+              <small>workflow · workaround recorded</small>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="setup" id="setup">
+        <div class="section-heading setup-heading">
+          <p class="folio">02 / GET STARTED</p>
+          <h2>Human hands<br>or agent hands.</h2>
+          <p>Both routes install the same checksum-verified binary. Pick the amount of typing you feel like doing.</p>
+        </div>
+
+        <div class="setup-grid">
+          <article class="setup-card">
+            <div class="setup-label"><span>For humans</span><b>3 commands</b></div>
+            <h3>Install it yourself</h3>
+            <p>macOS and Linux install to <code>~/.local/bin</code>. Windows gets a PowerShell installer.</p>
+            <div class="command-box">
+              <pre><code>curl -fsSL https://raw.githubusercontent.com/gabrielchantayan/paper/main/install.sh | sh</code></pre>
+              <button class="copy" data-copy="curl -fsSL https://raw.githubusercontent.com/gabrielchantayan/paper/main/install.sh | sh">Copy</button>
+            </div>
+            <div class="command-box compact">
+              <pre><code>paper init
+paper agent install all</code></pre>
+              <button class="copy" data-copy="paper init&#10;paper agent install all">Copy</button>
+            </div>
+            <a class="text-link" href="https://github.com/gabrielchantayan/paper#install">Windows and Go installation options <span aria-hidden="true">→</span></a>
+          </article>
+
+          <article class="setup-card agent-card">
+            <div class="setup-label"><span>For agents</span><b>1 prompt</b></div>
+            <h3>Hand over the setup</h3>
+            <p>Paste this into Claude Code, OpenCode, Kimi Code, or Pi. The setup contract tells it exactly what it may change and how to verify the result.</p>
+            <div class="prompt-box">
+              <p>Read https://gabrielchantayan.github.io/paper/setup.md and set up Paper for this environment.</p>
+              <button class="copy light" data-copy="Read https://gabrielchantayan.github.io/paper/setup.md and set up Paper for this environment.">Copy agent prompt</button>
+            </div>
+            <a class="text-link light-link" href="setup.md">Read the agent setup contract <span aria-hidden="true">→</span></a>
+          </article>
+        </div>
+      </section>
+
+      <section class="vault">
+        <div>
+          <p class="folio">03 / YOUR FILES</p>
+          <h2>A vault, not a database hostage situation.</h2>
+        </div>
+        <pre><code>~/.paper/
+├── work/
+│   └── 2026/08/
+│       └── 20260804T143012-shipped-release-a7c2.md
+└── cuts/
+    └── 20260804T144503-broken-doc-link-f19d.md</code></pre>
+        <p>Typed YAML properties on top. Ordinary Markdown underneath. Search it with <code>grep</code>, browse it in Obsidian, sync it however you already sync files.</p>
+      </section>
+    </main>
+
+    <footer>
+      <a class="brand footer-brand" href="#top"><span class="brand-mark" aria-hidden="true"><i>&#8203;</i><i>&#8203;</i><i>&#8203;</i></span><span>paper</span></a>
+      <p>Keep the outcome. Keep the papercut.</p>
+      <div><a href="https://github.com/gabrielchantayan/paper">GitHub</a><a href="https://github.com/gabrielchantayan/paper/releases">Releases</a><a href="setup.md">Agent setup</a></div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
